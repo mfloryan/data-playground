@@ -55,9 +55,11 @@ def get_price_history():
 price_history = get_price_history()
 df = pd.DataFrame(price_history)
 df['startsAt'] = pd.to_datetime(df['startsAt'])
+df['date'] = df['startsAt'].dt.date
 
-plt.figure(figsize=(8, 6))
-plt.boxplot(df['total'], vert=False)
-plt.title('Tibber hourly prices')
-plt.xlabel('Price')
+fig, ax = plt.subplots(figsize=(10, 6))
+df.boxplot(column='total', by='date', vert=False, ax=ax)
+ax.set_title('Tibber hourly prices per day')
+ax.set_xlabel('Price')
+fig.suptitle('')
 plt.show()
