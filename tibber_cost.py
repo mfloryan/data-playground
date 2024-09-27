@@ -21,7 +21,7 @@ def get_price_history():
     home(id: "%s") {
       currentSubscription {
         priceInfo {
-          range(resolution: HOURLY, last: 200) {
+          range(resolution: HOURLY, last: 400) {
             nodes {
               startsAt
               total
