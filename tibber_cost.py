@@ -51,6 +51,11 @@ def get_price_history():
             ['viewer']['home']['currentSubscription']
             ['priceInfo']['range']['nodes'])
 
+def prices_boxplot(df):
+    fig, ax = plt.subplots(figsize=(10, 4))
+    df.boxplot(column="total", vert=False, ax=ax)
+    fig.suptitle('Tibber hourly prices')
+    ax.set_title(f"Date range: {df['date'].min()} - {df['date'].max()}")
 
 def prices_boxplot_per_date(df):
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -59,12 +64,12 @@ def prices_boxplot_per_date(df):
     ax.set_xlabel('Price')
     fig.suptitle('')
 
-
 price_history = get_price_history()
 df = pd.DataFrame(price_history)
 df['startsAt'] = pd.to_datetime(df['startsAt'])
 df['date'] = df['startsAt'].dt.date
 
+prices_boxplot(df)
 prices_boxplot_per_date(df)
 
 plt.show()
