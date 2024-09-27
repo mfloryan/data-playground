@@ -1,3 +1,5 @@
+"""Plotting Tibber hourly price statistics"""
+
 import os
 from dotenv import load_dotenv
 from requests_cache import CachedSession
@@ -9,6 +11,7 @@ tibber_token = os.getenv('TIBBER_TOKEN')
 house_id = os.getenv('HOUSE_ID')
 
 TIBBER_API = "https://api.tibber.com/v1-beta/gql"
+
 
 def get_price_history():
     query = """
