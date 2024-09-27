@@ -2,11 +2,13 @@
 
 import os
 from functools import partial
+from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
 from requests_cache import CachedSession
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
+
 
 TIBBER_API = "https://api.tibber.com/v1-beta/gql"
 
@@ -26,8 +28,9 @@ def get_price_history(tibber_token, house_id):
 
     all_data = []
     cursor = ""
+    cutoff_date = datetime.now(timezone.utc).astimezone() - timedelta(weeks=4)
 
-    for _ in range(5):
+    while True:
 
         query = query_template % (house_id, cursor)
 
@@ -44,6 +47,10 @@ def get_price_history(tibber_token, house_id):
                 ['priceInfo']['range'])
 
         all_data.extend(data['nodes'])
+
+        if (datetime.fromisoformat(data['nodes'][0]['startsAt']) < cutoff_date):
+            break
+
         if data['pageInfo']['hasPreviousPage']:
             cursor = data['pageInfo']['startCursor']
         else:
