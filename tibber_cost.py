@@ -11,25 +11,13 @@ from matplotlib.backends.backend_pdf import PdfPages
 TIBBER_API = "https://api.tibber.com/v1-beta/gql"
 
 
+def load_query_from_file(filename):
+    with open(filename, 'r', encoding="utf-8") as file:
+        return file.read()
+
+
 def get_price_history(tibber_token, house_id):
-    query = """
-{
-  viewer {
-    home(id: "%s") {
-      currentSubscription {
-        priceInfo {
-          range(resolution: HOURLY, last: 400) {
-            nodes {
-              startsAt
-              total
-            }
-          }
-        }
-      }
-    }
-  }
-}
-""" % house_id
+    query = load_query_from_file('tibber_price_info.graphql') % house_id
 
     session = CachedSession('http_cache',
                             backend='filesystem',

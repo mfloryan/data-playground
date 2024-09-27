@@ -1,0 +1,22 @@
+{
+  viewer {
+    home(id: "%s") {
+      currentSubscription {
+        priceInfo {
+          range(resolution: HOURLY, last: 100) {
+            nodes {
+              startsAt
+              total
+            }
+            pageInfo {
+              hasPreviousPage
+              startCursor
+              endCursor
+              count
+            }            
+          }
+        }
+      }
+    }
+  }
+}
