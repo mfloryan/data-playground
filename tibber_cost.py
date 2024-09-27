@@ -17,24 +17,39 @@ def load_query_from_file(filename):
 
 
 def get_price_history(tibber_token, house_id):
-    query = load_query_from_file('tibber_price_info.graphql') % house_id
+    query_template = load_query_from_file('tibber_price_info.graphql')
 
     session = CachedSession('http_cache',
                             backend='filesystem',
                             serializer='json',
                             allowable_methods=('GET', 'POST'))
 
-    response = session.post(
-        TIBBER_API,
-        json={'query': query},
-        headers={
-            'Authorization': 'Bearer ' + tibber_token
-        },
-        timeout=0.5)
+    all_data = []
+    cursor = ""
 
-    return (response.json()['data']
-            ['viewer']['home']['currentSubscription']
-            ['priceInfo']['range']['nodes'])
+    for _ in range(5):
+
+        query = query_template % (house_id, cursor)
+
+        response = session.post(
+            TIBBER_API,
+            json={'query': query},
+            headers={
+                'Authorization': 'Bearer ' + tibber_token
+            },
+            timeout=0.5)
+
+        data = (response.json()['data']
+                ['viewer']['home']['currentSubscription']
+                ['priceInfo']['range'])
+
+        all_data.extend(data['nodes'])
+        if data['pageInfo']['hasPreviousPage']:
+            cursor = data['pageInfo']['startCursor']
+        else:
+            break
+
+    return all_data
 
 
 def prices_boxplot(df):

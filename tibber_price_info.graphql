@@ -3,7 +3,7 @@
     home(id: "%s") {
       currentSubscription {
         priceInfo {
-          range(resolution: HOURLY, last: 100) {
+          range(resolution: HOURLY, last: 100, before: "%s") {
             nodes {
               startsAt
               total
