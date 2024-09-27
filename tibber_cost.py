@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from requests_cache import CachedSession
+import pandas as pd
 
 load_dotenv()
 
@@ -47,5 +48,8 @@ def get_price_history():
             ['priceInfo']['range']['nodes'])
 
 
-
-print(get_price_history())
+price_history = get_price_history()
+df = pd.DataFrame(price_history)
+df['startsAt'] = pd.to_datetime(df['startsAt'])
+print(df.head)
+print(df.dtypes)
