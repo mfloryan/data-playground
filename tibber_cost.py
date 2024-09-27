@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from requests_cache import CachedSession
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
 
 load_dotenv()
 
@@ -52,27 +53,33 @@ def get_price_history():
             ['priceInfo']['range']['nodes'])
 
 
-def prices_boxplot(df):
+def prices_boxplot(df, pdf):
     fig, ax = plt.subplots(figsize=(10, 4))
     df.boxplot(column="total", vert=False, ax=ax)
     fig.suptitle('Tibber hourly prices')
     ax.set_title(f"Date range: {df['date'].min()} - {df['date'].max()}")
+    pdf.savefig(fig)
+    plt.close(fig)
 
 
-def prices_boxplot_per_date(df):
+def prices_boxplot_per_date(df, pdf):
     fig, ax = plt.subplots(figsize=(10, 6))
     df.boxplot(column='total', by='date', vert=False, ax=ax)
     ax.set_title('Tibber hourly prices by date')
     ax.set_xlabel('Price')
     fig.suptitle('')
+    pdf.savefig(fig)
+    plt.close(fig)
 
 
-def prices_boxplot_per_hour(df):
+def prices_boxplot_per_hour(df, pdf):
     fig, ax = plt.subplots(figsize=(10, 6))
     df.boxplot(column='total', by='hour', vert=False, ax=ax)
     ax.set_title('Tibber hourly prices by hour of the day')
     ax.set_xlabel('Price')
     fig.suptitle('')
+    pdf.savefig(fig)
+    plt.close(fig)
 
 
 price_history = get_price_history()
@@ -81,8 +88,8 @@ df['startsAt'] = pd.to_datetime(df['startsAt'])
 df['date'] = df['startsAt'].dt.date
 df['hour'] = df['startsAt'].dt.hour
 
-prices_boxplot(df)
-prices_boxplot_per_date(df)
-prices_boxplot_per_hour(df)
+with PdfPages('tibber-energy-prices.pdf') as pdf:
 
-plt.show()
+    prices_boxplot(df, pdf)
+    prices_boxplot_per_date(df, pdf)
+    prices_boxplot_per_hour(df, pdf)
