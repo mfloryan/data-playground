@@ -79,10 +79,11 @@ def prices_boxplot_per_hour(df):
     return fig
 
 
-def save_plot_to_pdf(plot_fun, pdf):
-    fig = plot_fun()
-    pdf.savefig(fig)
-    plt.close(fig)
+def save_plot_to_pdf(pdf, *figure_generators):
+    for generator in figure_generators:
+        fig = generator()
+        pdf.savefig(fig)
+        plt.close(fig)
 
 
 price_history = get_price_history()
@@ -93,6 +94,8 @@ df['hour'] = df['startsAt'].dt.hour
 
 with PdfPages('tibber-energy-prices.pdf') as pdf:
 
-    save_plot_to_pdf(lambda: prices_boxplot(df), pdf)
-    save_plot_to_pdf(lambda: prices_boxplot_per_date(df), pdf)
-    save_plot_to_pdf(lambda: prices_boxplot_per_hour(df), pdf)
+    save_plot_to_pdf(pdf,
+                     lambda: prices_boxplot(df),
+                     lambda: prices_boxplot_per_date(df),
+                     lambda: prices_boxplot_per_hour(df)
+                     )
