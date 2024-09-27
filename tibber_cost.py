@@ -53,31 +53,33 @@ def get_price_history():
             ['priceInfo']['range']['nodes'])
 
 
-def prices_boxplot(df, pdf):
+def prices_boxplot(df):
     fig, ax = plt.subplots(figsize=(10, 4))
     df.boxplot(column="total", vert=False, ax=ax)
     fig.suptitle('Tibber hourly prices')
     ax.set_title(f"Date range: {df['date'].min()} - {df['date'].max()}")
-    pdf.savefig(fig)
-    plt.close(fig)
+    return fig
 
 
-def prices_boxplot_per_date(df, pdf):
+def prices_boxplot_per_date(df):
     fig, ax = plt.subplots(figsize=(10, 6))
     df.boxplot(column='total', by='date', vert=False, ax=ax)
     ax.set_title('Tibber hourly prices by date')
     ax.set_xlabel('Price')
     fig.suptitle('')
-    pdf.savefig(fig)
-    plt.close(fig)
+    return fig
 
 
-def prices_boxplot_per_hour(df, pdf):
+def prices_boxplot_per_hour(df):
     fig, ax = plt.subplots(figsize=(10, 6))
     df.boxplot(column='total', by='hour', vert=False, ax=ax)
     ax.set_title('Tibber hourly prices by hour of the day')
     ax.set_xlabel('Price')
     fig.suptitle('')
+    return fig
+
+
+def save_plot_to_pdf(fig, pdf):
     pdf.savefig(fig)
     plt.close(fig)
 
@@ -90,6 +92,6 @@ df['hour'] = df['startsAt'].dt.hour
 
 with PdfPages('tibber-energy-prices.pdf') as pdf:
 
-    prices_boxplot(df, pdf)
-    prices_boxplot_per_date(df, pdf)
-    prices_boxplot_per_hour(df, pdf)
+    save_plot_to_pdf(prices_boxplot(df), pdf)
+    save_plot_to_pdf(prices_boxplot_per_date(df), pdf)
+    save_plot_to_pdf(prices_boxplot_per_hour(df), pdf)
