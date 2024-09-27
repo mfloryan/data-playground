@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 from requests_cache import CachedSession
 import pandas as pd
+import matplotlib.pyplot as plt
 
 load_dotenv()
 
@@ -54,5 +55,9 @@ def get_price_history():
 price_history = get_price_history()
 df = pd.DataFrame(price_history)
 df['startsAt'] = pd.to_datetime(df['startsAt'])
-print(df.head)
-print(df.dtypes)
+
+plt.figure(figsize=(8, 6))
+plt.boxplot(df['total'], vert=False)
+plt.title('Tibber hourly prices')
+plt.xlabel('Price')
+plt.show()
