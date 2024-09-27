@@ -71,10 +71,11 @@ def prices_boxplot_per_date(df):
 
 
 def prices_boxplot_per_hour(df):
-    fig, ax = plt.subplots(figsize=(10, 6))
-    df.boxplot(column='total', by='hour', vert=False, ax=ax)
+    fig, ax = plt.subplots(figsize=(10, 8))
+    df.boxplot(column='total', by='hour', ax=ax)
     ax.set_title('Tibber hourly prices by hour of the day')
-    ax.set_xlabel('Price')
+    ax.set_ylabel('price')
+    ax.set_xlabel('hour')
     fig.suptitle('')
     return fig
 
