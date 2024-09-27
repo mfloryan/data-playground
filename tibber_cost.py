@@ -63,6 +63,7 @@ def prices_boxplot_per_date(df):
     ax.set_title('Tibber hourly prices by date')
     ax.set_xlabel('Price')
     fig.suptitle('')
+    fig.subplots_adjust(left=0.15)
     return fig
 
 
