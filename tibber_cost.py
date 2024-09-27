@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-import requests
+from requests_cache import CachedSession
 
 load_dotenv()
 
@@ -10,7 +10,6 @@ house_id = os.getenv('HOUSE_ID')
 TIBBER_API = "https://api.tibber.com/v1-beta/gql"
 
 def get_price_history():
-
     query = """
 {
   viewer {
@@ -30,7 +29,12 @@ def get_price_history():
 }
 """ % house_id
 
-    response = requests.post(
+    session = CachedSession('http_cache',
+                            backend='filesystem',
+                            serializer='json',
+                            allowable_methods=('GET', 'POST'))
+
+    response = session.post(
         TIBBER_API,
         json={'query': query},
         headers={
@@ -41,6 +45,7 @@ def get_price_history():
     return (response.json()['data']
             ['viewer']['home']['currentSubscription']
             ['priceInfo']['range']['nodes'])
+
 
 
 print(get_price_history())
