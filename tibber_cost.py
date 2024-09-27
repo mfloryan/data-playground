@@ -6,6 +6,7 @@ from requests_cache import CachedSession
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
+from functools import partial
 
 load_dotenv()
 
@@ -96,7 +97,7 @@ df['hour'] = df['startsAt'].dt.hour
 with PdfPages('tibber-energy-prices.pdf') as pdf:
 
     save_plot_to_pdf(pdf,
-                     lambda: prices_boxplot(df),
-                     lambda: prices_boxplot_per_date(df),
-                     lambda: prices_boxplot_per_hour(df)
+                     partial(prices_boxplot, df),
+                     partial(prices_boxplot_per_date, df),
+                     partial(prices_boxplot_per_hour, df)
                      )
