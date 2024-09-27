@@ -35,7 +35,8 @@ def get_price_history():
         json={'query': query},
         headers={
             'Authorization': 'Bearer ' + tibber_token
-        })
+        },
+        timeout=0.5)
 
     return (response.json()['data']
             ['viewer']['home']['currentSubscription']
