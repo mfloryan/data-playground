@@ -1,22 +1,17 @@
 """Plotting Tibber hourly price statistics"""
 
 import os
+from functools import partial
 from dotenv import load_dotenv
 from requests_cache import CachedSession
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
-from functools import partial
-
-load_dotenv()
-
-tibber_token = os.getenv('TIBBER_TOKEN')
-house_id = os.getenv('HOUSE_ID')
 
 TIBBER_API = "https://api.tibber.com/v1-beta/gql"
 
 
-def get_price_history():
+def get_price_history(tibber_token, house_id):
     query = """
 {
   viewer {
@@ -88,7 +83,12 @@ def save_plot_to_pdf(pdf, *figure_generators):
         plt.close(fig)
 
 
-price_history = get_price_history()
+load_dotenv()
+
+tibber_token = os.getenv('TIBBER_TOKEN')
+house_id = os.getenv('HOUSE_ID')
+
+price_history = get_price_history(tibber_token, house_id)
 df = pd.DataFrame(price_history)
 df['startsAt'] = pd.to_datetime(df['startsAt'])
 df['date'] = df['startsAt'].dt.date
