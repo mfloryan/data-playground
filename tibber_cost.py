@@ -9,7 +9,9 @@ house_id = os.getenv('HOUSE_ID')
 
 TIBBER_API = "https://api.tibber.com/v1-beta/gql"
 
-query = """
+def get_price_history():
+
+    query = """
 {
   viewer {
     home(id: "%s") {
@@ -28,11 +30,16 @@ query = """
 }
 """ % house_id
 
-response = requests.post(
-    TIBBER_API,
-    json={'query': query},
-    headers={
-        'Authorization': 'Bearer ' + tibber_token
-    })
+    response = requests.post(
+        TIBBER_API,
+        json={'query': query},
+        headers={
+            'Authorization': 'Bearer ' + tibber_token
+        })
 
-print(response.json())
+    return (response.json()['data']
+            ['viewer']['home']['currentSubscription']
+            ['priceInfo']['range']['nodes'])
+
+
+print(get_price_history())
