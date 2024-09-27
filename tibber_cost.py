@@ -48,7 +48,10 @@ def get_price_history(tibber_token, house_id):
 
         all_data.extend(data['nodes'])
 
-        if (datetime.fromisoformat(data['nodes'][0]['startsAt']) < cutoff_date):
+        date_of_earliest_price = datetime.fromisoformat(
+            data['nodes'][0]['startsAt'])
+
+        if date_of_earliest_price < cutoff_date:
             break
 
         if data['pageInfo']['hasPreviousPage']:
