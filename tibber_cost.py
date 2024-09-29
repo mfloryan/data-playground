@@ -1,5 +1,6 @@
 """Plotting Tibber hourly price statistics"""
 
+import datetime
 import os
 from functools import partial
 from dotenv import load_dotenv
@@ -56,7 +57,14 @@ df['startsAt'] = pd.to_datetime(df['startsAt'])
 df['date'] = df['startsAt'].dt.date
 df['hour'] = df['startsAt'].dt.hour
 
-with PdfPages('tibber-energy-prices.pdf') as pdf:
+metadata = {
+    'Creator': 'tibber_cost.py',
+    'Author': 'Marcin Floryan',
+    'Title': 'Visualisation of Tibber Hourly Prices',
+    'CreationDate': datetime.datetime.today()
+}
+
+with PdfPages('tibber-energy-prices.pdf', metadata=metadata) as pdf:
 
     save_plot_to_pdf(pdf,
                      partial(prices_boxplot, df),
