@@ -17,7 +17,8 @@ def get_price_history(tibber_token, house_id):
     session = CachedSession('http_cache',
                             backend='filesystem',
                             serializer='json',
-                            allowable_methods=('GET', 'POST'))
+                            allowable_methods=('GET', 'POST'),
+                            expire_after=timedelta(minutes=90))
 
     all_data = []
     cursor = ""
