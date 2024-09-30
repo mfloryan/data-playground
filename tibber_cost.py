@@ -39,6 +39,13 @@ def prices_boxplot_per_hour(df):
     return fig
 
 
+def title_page():
+    fig = plt.figure(figsize=(10, 6))
+    fig.text(0.5, 0.5, "Tibber Hourly Electricity Prices",
+            fontsize=28, ha='center', va='center')
+    return fig
+
+
 def save_plot_to_pdf(pdf, *figure_generators):
     for generator in figure_generators:
         fig = generator()
@@ -67,6 +74,7 @@ metadata = {
 with PdfPages('tibber-energy-prices.pdf', metadata=metadata) as pdf:
 
     save_plot_to_pdf(pdf,
+                     title_page,
                      partial(prices_boxplot, df),
                      partial(prices_boxplot_per_date, df),
                      partial(prices_boxplot_per_hour, df)
