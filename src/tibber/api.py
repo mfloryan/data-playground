@@ -1,15 +1,14 @@
 """Tibber API"""
 
 from datetime import datetime, timedelta, timezone
-import importlib.resources
+from importlib.resources import files
 from requests_cache import CachedSession
 
 TIBBER_API = "https://api.tibber.com/v1-beta/gql"
 
 
 def load_query_from_file(filename):
-    with importlib.resources.open_text(
-         'tibber', filename, encoding='utf-8') as file:
+    with files("tibber").joinpath(filename).open("r", encoding="utf-8") as file:
         return file.read()
 
 
