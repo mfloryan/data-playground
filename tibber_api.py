@@ -7,18 +7,20 @@ TIBBER_API = "https://api.tibber.com/v1-beta/gql"
 
 
 def load_query_from_file(filename):
-    with open(filename, 'r', encoding="utf-8") as file:
+    with open(filename, "r", encoding="utf-8") as file:
         return file.read()
 
 
 def get_price_history(tibber_token, house_id):
-    query_template = load_query_from_file('tibber_price_info.graphql')
+    query_template = load_query_from_file("tibber_price_info.graphql")
 
-    session = CachedSession('http_cache',
-                            backend='filesystem',
-                            serializer='json',
-                            allowable_methods=('GET', 'POST'),
-                            expire_after=timedelta(minutes=90))
+    session = CachedSession(
+        "http_cache",
+        backend="filesystem",
+        serializer="json",
+        allowable_methods=("GET", "POST"),
+        expire_after=timedelta(minutes=90),
+    )
 
     all_data = []
     cursor = ""
@@ -30,26 +32,24 @@ def get_price_history(tibber_token, house_id):
 
         response = session.post(
             TIBBER_API,
-            json={'query': query},
-            headers={
-                'Authorization': 'Bearer ' + tibber_token
-            },
-            timeout=0.5)
+            json={"query": query},
+            headers={"Authorization": "Bearer " + tibber_token},
+            timeout=0.5,
+        )
 
-        data = (response.json()['data']
-                ['viewer']['home']['currentSubscription']
-                ['priceInfo']['range'])
+        data = (response.json()["data"]["viewer"]["home"]
+                ["currentSubscription"]["priceInfo"]["range"])
 
-        all_data.extend(data['nodes'])
+        all_data.extend(data["nodes"])
 
         date_of_earliest_price = datetime.fromisoformat(
-            data['nodes'][0]['startsAt'])
+            data["nodes"][0]["startsAt"])
 
         if date_of_earliest_price < cutoff_date:
             break
 
-        if data['pageInfo']['hasPreviousPage']:
-            cursor = data['pageInfo']['startCursor']
+        if data["pageInfo"]["hasPreviousPage"]:
+            cursor = data["pageInfo"]["startCursor"]
         else:
             break
 
