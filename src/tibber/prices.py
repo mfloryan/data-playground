@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
-from tibber_api import get_price_history
+from tibber.api import get_price_history
 
 
 def prices_boxplot(df):

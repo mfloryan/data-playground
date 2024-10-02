@@ -2,5 +2,6 @@
 .env
 http_cache/
 __pycache__/
+*.egg-info/
 
 tibber-energy-prices.pdf
