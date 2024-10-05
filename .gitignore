@@ -1,3 +1,5 @@
+.vscode/
+
 .venv/
 .env
 http_cache/
