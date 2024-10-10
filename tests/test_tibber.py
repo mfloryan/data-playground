@@ -14,6 +14,20 @@ class TibberAPI(unittest.TestCase):
             response = api.get_price_history("test_token", "test_house_id")
             self.assertEqual(len(response), 1)
 
+    def test_api_token_is_included_in_request(self):
+        with patch("tibber.api.CachedSession") as mocked_request:
+            pretend_tibber_api.returns_single_item(mocked_request)
+            api.get_price_history("tibber_api_token", "house_id")
+            post_call_arguments = mocked_request.return_value.post.call_args
+
+            self.assertIn(
+                "authorization",
+                post_call_arguments.kwargs['headers'])
+
+            self.assertEqual(
+                post_call_arguments.kwargs['headers']['authorization'],
+                "Bearer tibber_api_token")
+
 
 class pretend_tibber_api:
 

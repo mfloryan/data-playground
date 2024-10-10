@@ -34,7 +34,7 @@ def get_price_history(tibber_token, house_id):
         response = session.post(
             TIBBER_API,
             json={"query": query},
-            headers={"Authorization": "Bearer " + tibber_token},
+            headers={"authorization": "Bearer " + tibber_token},
             timeout=0.5,
         )
 
