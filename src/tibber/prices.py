@@ -66,9 +66,10 @@ house_id = os.getenv("HOUSE_ID")
 
 price_history = get_price_history(tibber_token, house_id)
 df = pd.DataFrame(price_history)
-df["startsAt"] = pd.to_datetime(df["startsAt"])
-df["date"] = df["startsAt"].dt.date
-df["hour"] = df["startsAt"].dt.hour
+df["startsAt"] = pd.to_datetime(df["startsAt"], utc=True)
+df["startsAt_local"] = df["startsAt"].dt.tz_convert("Europe/Stockholm")
+df["date"] = df["startsAt_local"].dt.date
+df["hour"] = df["startsAt_local"].dt.hour
 
 metadata = {
     "Creator": "tibber_cost.py",
