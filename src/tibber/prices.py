@@ -71,6 +71,30 @@ def prices_boxplot_per_week(df):
     return fig
 
 
+def prices_boxplot_per_hour_grouped_by_weeks(df):
+    df["week"] = df["startsAt_local"].dt.isocalendar().week
+    weeks = sorted(df["week"].unique().tolist())
+    num_weeks = len(weeks)
+    num_cols = 3
+    num_rows = (num_weeks + num_cols - 1) // num_cols
+
+    fig, axes = plt.subplots(num_rows, num_cols, figsize=(15, num_rows * 4), constrained_layout=True)
+    axes = axes.flatten()
+
+    for i, week in enumerate(weeks):
+        week_df = df[df["week"] == week]
+        ax = axes[i]
+        week_df.boxplot(column="total", by="hour", ax=ax)
+        ax.set_title(f"Week {week}")
+        ax.set_xlabel("Hour")
+        ax.set_ylabel("Price")
+
+    for j in range(i + 1, len(axes)):
+        fig.delaxes(axes[j])
+
+    fig.suptitle("Tibber hourly prices by hour of the day, grouped by week")
+    return fig
+
 def title_page():
     fig = plt.figure(figsize=(10, 6))
     fig.text(
@@ -120,4 +144,5 @@ with PdfPages("tibber-energy-prices.pdf", metadata=metadata) as pdf:
         partial(prices_boxplot_per_week, df),
         partial(prices_boxplot_per_weekday, df),
         partial(prices_boxplot_per_hour, df),
+        partial(prices_boxplot_per_hour_grouped_by_weeks, df),
     )
