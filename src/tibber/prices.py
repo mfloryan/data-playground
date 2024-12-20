@@ -39,6 +39,42 @@ def prices_boxplot_per_hour(df):
     return fig
 
 
+def prices_boxplot_grouped_by_weeks(df):
+    df["week"] = df["startsAt_local"].dt.isocalendar().week
+    df["day_of_week"] = df["startsAt_local"].dt.weekday
+    df["day_of_week_name"] = df["startsAt_local"].dt.strftime("%a")
+
+    # Create ordered categories for days of the week
+    day_order = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    df["day_of_week_name"] = pd.Categorical(
+        df["day_of_week_name"], categories=day_order, ordered=True
+    )
+
+    weeks = df["week"].unique()[::-1]  # Reverse the order of weeks
+    n_weeks = len(weeks)
+    n_cols = 3
+    n_rows = (n_weeks + n_cols - 1) // n_cols
+
+    fig, axes = plt.subplots(
+        n_rows, n_cols, figsize=(15, 2 + n_rows * 2), sharex=True
+    )
+    axes = axes.flatten()
+
+    for ax in axes[n_weeks:]:
+        ax.axis("off")  # Turn off axes for empty subplots
+
+    for ax, week in zip(axes, weeks):
+        week_data = df[df["week"] == week]
+        week_data.boxplot(column="total", by="day_of_week_name", ax=ax)
+        ax.set_title(f"Week {week}")
+        ax.set_xlabel("Day of the Week")
+        ax.set_ylabel("Price")
+
+    fig.suptitle("Tibber hourly prices by week and day of the week")
+    fig.subplots_adjust(left=0.15, hspace=0.4, wspace=0.4)
+    return fig
+
+
 def title_page():
     fig = plt.figure(figsize=(10, 6))
     fig.text(
@@ -85,5 +121,6 @@ with PdfPages("tibber-energy-prices.pdf", metadata=metadata) as pdf:
         title_page,
         partial(prices_boxplot, df),
         partial(prices_boxplot_per_date, df),
+        partial(prices_boxplot_grouped_by_weeks, df),
         partial(prices_boxplot_per_hour, df),
     )
