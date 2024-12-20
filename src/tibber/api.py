@@ -12,7 +12,7 @@ def load_query_from_file(filename):
         return file.read()
 
 
-def get_price_history(tibber_token, house_id):
+def get_price_history(tibber_token, house_id, weeks_to_get=4):
     query_template = load_query_from_file("tibber_price_info.graphql")
 
     session = CachedSession(
@@ -25,7 +25,7 @@ def get_price_history(tibber_token, house_id):
 
     all_data = []
     cursor = ""
-    cutoff_date = datetime.now(timezone.utc).astimezone() - timedelta(weeks=4)
+    cutoff_date = datetime.now(timezone.utc).astimezone() - timedelta(weeks=weeks_to_get)
 
     while True:
 

@@ -120,7 +120,7 @@ load_dotenv()
 tibber_token = os.getenv("TIBBER_TOKEN")
 house_id = os.getenv("HOUSE_ID")
 
-price_history = get_price_history(tibber_token, house_id)
+price_history = get_price_history(tibber_token, house_id, weeks_to_get=6)
 df = pd.DataFrame(price_history)
 df["startsAt"] = pd.to_datetime(df["startsAt"], utc=True)
 df["startsAt_local"] = df["startsAt"].dt.tz_convert("Europe/Stockholm")
