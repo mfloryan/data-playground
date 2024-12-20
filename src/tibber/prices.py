@@ -38,6 +38,23 @@ def prices_boxplot_per_hour(df):
     fig.suptitle("")
     return fig
 
+def prices_boxplot_per_weekday(df):
+    df["day_of_week"] = df["startsAt_local"].dt.weekday
+    df["day_of_week_name"] = df["startsAt_local"].dt.strftime("%a")
+
+    # Create ordered categories for days of the week
+    day_order = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    df["day_of_week_name"] = pd.Categorical(
+        df["day_of_week_name"], categories=day_order, ordered=True
+    )
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    df.boxplot(column="total", by="day_of_week_name", ax=ax)
+    ax.set_title("Tibber hourly prices by day of the week")
+    ax.set_xlabel("Day of the Week")
+    ax.set_ylabel("Price")
+    fig.suptitle("")
+    return fig
 
 def prices_boxplot_grouped_by_weeks(df):
     df["week"] = df["startsAt_local"].dt.isocalendar().week
@@ -122,5 +139,6 @@ with PdfPages("tibber-energy-prices.pdf", metadata=metadata) as pdf:
         partial(prices_boxplot, df),
         partial(prices_boxplot_per_date, df),
         partial(prices_boxplot_grouped_by_weeks, df),
+        partial(prices_boxplot_per_weekday, df),
         partial(prices_boxplot_per_hour, df),
     )
